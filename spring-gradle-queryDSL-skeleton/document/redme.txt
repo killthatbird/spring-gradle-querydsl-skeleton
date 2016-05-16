@@ -1,0 +1,64 @@
+・概要
+ このプロジェクトはSpringを利用したサンプルプロジェクトです。
+ データベースへの接続はQueryDSLを利用していてcom.park.spring.skeleton.base.dao.impl.AbstractQueryDslDaoでコントロールしています。
+ また、複数のデータベースがある場合は切り替えが可能になっていて、
+ その切り替えは以下のファイルを参照してください。
+ com.park.spring.skeleton.base.common.ExecutionLoggingAspect
+ com.park.spring.skeleton.base.handler.datasource.*
+ com.park.spring.skeleton.front.config.JpaConfiguration
+ 
+ ログイン処理は
+ com.park.spring.skeleton.front.config.WebSecurityConfig
+ com.park.spring.skeleton.front.service.impl.UserDetailServiceImpl
+ com.park.spring.skeleton.front.web.handler.LoginAuthenticationProvider
+ を参照してください。
+ 
+ 
+ 
+・主なフレームワーク
+ spring-boot-*-1.3.5
+ 
+ thymeleaf-2.1.4
+ spring-*-4.2.6
+ spring-security-*-4.0.4
+ queryDSL-*-3.7.2
+ 　      
+
+
+・プロジェクト構成
+ sgqs_base			共通モジュール格納「util, dao, dto」
+ sgqs_batch			バッチプロジェクト(使われてない)
+ sgqs_front			フロントWEBプロジェクト(ログイン、データの追加、修正ができるサンプルプロジェクト)
+ sgqs_manager		フロントを管理するマネージャーWEBプロジェクト(使われてない)
+ spring-gradle-queryDSL-skeleton Gradleプロジェクト
+
+・プロジェクトRUNまでの流れ
+ (私はSTS3.6.1を使っていますので、この基準で説明します。)
+ - IDEへのプロジェクトImport
+   File -> Import -> Gradle -> Gradle Project -> Browse...(Select Project) -> Build Model -> Select All -> Finish
+ 
+ - データベース初期化
+   spring-gradle-queryDSL-skeletonのdocument -> sql -> init.sql　参照
+ 
+ - Gradle Command
+   :Eclipse 更新時
+    gradlew.bat clean mkdirs eclipse
+    
+   :コード生成、Build時
+    gradlew.bat clean build
+    
+   :リアルサーバ用のBuild時
+    gradlew.bat -Penv=prod clean build
+ 
+   *ディレクトリの生成が必要なときには　mkdirs　タスク
+   
+ - Run 
+   .該当のプロジェクトの上でマウス右 -> Run As -> Spring Boot App
+ 
+ - Login
+   ID: test1234
+   PW: test1234
+   
+   
+
+ 

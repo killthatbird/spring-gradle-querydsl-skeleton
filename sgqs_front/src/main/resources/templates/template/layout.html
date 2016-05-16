@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html 
+	xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title layout:title-pattern="$CONTENT_TITLE｜$DECORATOR_TITLE">Spring Gradle QueryDSL Skeleton</title>
+
+<!-- style CSS - Include with every page -->
+<link type="text/css" rel="stylesheet" href="../../css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" />
+<link type="text/css" rel="stylesheet" href="../../css/bootstrap-theme.min.css" th:href="@{/css/bootstrap-theme.min.css}" />
+<link type="text/css" rel="stylesheet" href="../../css/bootstrap-select.min.css" th:href="@{/css/bootstrap-select.min.css}" />
+<link type="text/css" rel="stylesheet" href="../../css/common.css" th:href="@{/css/common.css}" />
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="../../js/old-browser/html5shiv.js" th:src="@{/js/old-browser/html5shiv.js}" />
+<script type="text/javascript" src="../../js/old-browser/respond.min.js" th:src="@{/js/old-browser/respond.min.js}" />
+<![endif]-->
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+var context = [[@{/}]];
+/*]]>*/
+</script>
+</head>
+
+<body>
+<iframe width='0' src="" height='0' name='hiddenframe' id="hiddenframe" style='display:none;'></iframe>
+
+<div class="modal fade" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false" aria-hidden="true" style="z-index:9999999;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+				
+			<div class="modal-header">
+				<h1>Processing...</h1>
+			</div>
+			<div class="modal-body">
+				
+				<div class="progress">
+					<div class="progress-bar progress-bar-striped active"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+						<span class="sr-only">Please wait..</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div th:replace="template/header :: header">Header</div>
+<div id="the-content" layout:fragment="content">
+	<!-- include here the content of the current page visited by the user -->
+</div>
+<div th:replace="template/footer :: footer">Footer</div>
+
+<!-- jQuery (JavaScript plugins) -->
+<script type="text/javascript" src="../../js/jquery.min.js" th:src="@{/js/jquery.min.js}" />
+<script type="text/javascript" src="../../js/jquery.validate.min.js" th:src="@{/js/jquery.validate.min.js}" />
+<script type="text/javascript" src="../../js/localization/messages_ja.min.js" th:src="@{/js/localization/messages_ja.min.js}" />
+
+<!-- bootstrap (JavaScript plugins) -->
+<script type="text/javascript" src="../../js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}" />
+<script type="text/javascript" src="../../js/bootstrap-select.min.js" th:src="@{/js/bootstrap-select.min.js}" />
+
+<!-- common (JavaScript plugins) -->
+<script type="text/javascript" src="../../js/common.js" th:src="@{/js/common.js}" />
+
+<!-- Custom Scripts - Include with one page  -->
+<div th:remove="tag" layout:fragment="custom-script" />
+
+</body>
+</html>

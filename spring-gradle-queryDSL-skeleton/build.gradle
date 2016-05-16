@@ -1,0 +1,294 @@
+apply plugin: 'eclipse'
+/**
+ * eclipse 更新時
+ * gradlew.bat clean mkdirs eclipse
+ *
+ * コード生成、Build時
+ * gradlew.bat clean build
+ *
+ * リアルサーバ用のBuild時
+ * gradlew.bat -Penv=prod clean build
+ * 
+ * ディレクトリの生成が必要なときには　mkdirs　タスク
+ */
+buildscript {
+	ext {
+		//DB
+		queryDSLVersion = '3.7.2'
+		mysqlConnectorJavaVersion = '5.1.34'
+		hikariCPVersion = '2.4.5'
+		
+		//Spring 
+		springBootVersion = '1.3.5.RELEASE'
+		springVersion = '4.2.6.RELEASE'
+		
+		//Thymeleaf extras
+		thymeleafExtrasConditionalcommentsVersion = '2.1.1.RELEASE'
+		thymeleafExtrasSpringsecurity3Version = '2.1.1.RELEASE'
+		
+		//Util
+		javaxMailVersion = '1.4.7'
+		slf4jVersion = '1.7.7'
+		logbackVersion = '1.1.7'
+	}
+
+	repositories {
+		mavenCentral()
+
+		maven {
+			url 'http://repo.spring.io/snapshot'
+			url 'http://repo.spring.io/libs-release'
+			url 'http://repo.spring.io/milestone'
+			
+		}
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+subprojects {
+	
+	apply plugin: 'java'
+	apply plugin: 'eclipse'
+	apply plugin: 'idea'
+
+	def defaultEncoding = 'UTF-8'
+	[compileJava, compileTestJava]*.options*.encoding = defaultEncoding
+	
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
+
+	version = '0.1'
+ 
+	repositories {
+		mavenCentral()
+		maven {
+			url 'http://repo.spring.io/snapshot'
+			url 'http://repo.spring.io/libs-release'
+			url 'http://repo.spring.io/milestone'
+			
+		}
+	}
+
+	//ソースディレクトリ設定
+	sourceSets {
+	    generated {
+	        java {
+	            srcDirs = ['src/main/generated/']
+	        }
+	    }
+	}
+	
+	def environment = project.hasProperty( 'env' ) ? env : 'dev'
+	sourceSets.main.resources.srcDirs = [ 'src/main/resources' ]
+	
+	if( environment.equals( 'prod' ))
+	sourceSets.main.resources.srcDirs 'src/main/resources/production'
+	else
+	sourceSets.main.resources.srcDirs 'src/main/resources/development'
+	
+	println "Target environment: $environment"
+
+	
+	//QueryDSL設定
+	configurations {
+	    querydslapt
+	}
+
+ 	
+	dependencies {
+		
+		
+		// DB
+		compile("mysql:mysql-connector-java:${mysqlConnectorJavaVersion}")
+		
+		//connection pool
+		compile("com.zaxxer:HikariCP:${hikariCPVersion}")
+		
+		//Spring boot
+		compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
+		compile("org.springframework.boot:spring-boot-starter-security:${springBootVersion}")
+		compile("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
+		compile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+		
+
+	    //provided("com.mysema.querydsl:querydsl-apt:${queryDSLVersion}") {
+		//	exclude group: 'com.google.guava'
+		//}
+		
+		// Logging with SLF4J & LogBack
+		compile("org.slf4j:slf4j-api:${slf4jVersion}")
+		compile("ch.qos.logback:logback-classic:${logbackVersion}")
+
+		// util
+		compile("com.google.guava:guava:18.0")
+		compile("com.google.code.gson:gson:2.3")
+
+
+		testCompile 'junit:junit:4.11'
+	}
+	
+	//テスト時のExclude追加
+	test {
+		scanForTestClasses=false
+		exclude 'com/park/spring/skeleton/config/**'
+	}
+
+	eclipse {
+		classpath {
+			file {
+				whenMerged { classpath ->
+					classpath.configure classpath.entries.grep { entry ->
+						!(entry instanceof org.gradle.plugins.ide.eclipse.model.Library)
+					}
+				}
+			}
+		}
+
+	}
+	
+	
+	task mkdirs << {
+		["src/main/generated", "src/main/java", "src/main/resources", "src/test/java", "src/test/resources"].each {
+			def path = "${projectDir}/${it}"
+			ant.mkdir(dir: path)
+			ant.touch(file: "${path}/.gitkeep")
+		}
+	}
+}
+
+project(':sgqs_base') {
+	dependencies {
+		//QueryDSL
+		compile("com.mysema.querydsl:querydsl-core:${queryDSLVersion}")
+	    compile("com.mysema.querydsl:querydsl-jpa:${queryDSLVersion}")
+	    compile("com.mysema.querydsl:querydsl-sql:${queryDSLVersion}")
+	    querydslapt "com.mysema.querydsl:querydsl-apt:${queryDSLVersion}"
+	    
+	    
+		//Java Mail
+		compile("javax.mail:mail:${javaxMailVersion}")
+		compile("javax.mail:javax.mail-api:${javaxMailVersion}")
+		compile("org.springframework:spring-context-support:${springVersion}")
+		
+		
+	}
+	
+	task generateQueryDSL(type: JavaCompile, group: 'build', description: 'Generates the QueryDSL query types') {
+	    source = sourceSets.main.java
+	    classpath = configurations.compile + configurations.querydslapt
+	    options.compilerArgs = [
+	            "-proc:only",
+	            "-processor", "com.mysema.query.apt.jpa.JPAAnnotationProcessor"
+	    ]
+	    options.encoding = 'UTF-8'
+	    destinationDir = sourceSets.generated.java.srcDirs.iterator().next()
+	}
+	
+	compileJava {
+	    dependsOn generateQueryDSL
+	    source generateQueryDSL.destinationDir
+	}
+	
+	
+	compileGeneratedJava {
+	    dependsOn generateQueryDSL
+	    options.warnings = false
+	    classpath += sourceSets.main.runtimeClasspath
+	}
+	
+	clean {
+	    delete sourceSets.generated.java.srcDirs.iterator().next()
+	}
+	
+	idea {
+	    module {
+	        sourceDirs += file('src/main/generated')
+	    }
+	}
+	
+}
+
+project(':sgqs_front') {
+	apply plugin: 'spring-boot'
+	
+	configurations {
+		spi
+	}
+
+	dependencies {
+		compile project(':sgqs_base')
+		
+		compile("org.springframework.boot:spring-boot-starter-thymeleaf:${springBootVersion}")
+		compile("org.thymeleaf.extras:thymeleaf-extras-conditionalcomments:${thymeleafExtrasConditionalcommentsVersion}")
+		
+		compile("org.thymeleaf.extras:thymeleaf-extras-springsecurity3:${thymeleafExtrasSpringsecurity3Version}")
+	}
+
+	task spiJar(type: Jar) {
+		baseName = 'api-spi'
+		dependsOn classes
+		from sourceSets.main.output
+		include('com/park/spring/skeleton/base/**')
+	}
+
+	artifacts {
+		spi spiJar
+	}
+}
+
+project(':sgqs_manager') {
+	apply plugin: 'spring-boot'
+
+	configurations {
+		spi
+	}
+
+	dependencies {
+		compile project(':sgqs_base')
+		
+		compile("org.springframework.boot:spring-boot-starter-thymeleaf:${springBootVersion}")
+		compile("org.thymeleaf.extras:thymeleaf-extras-conditionalcomments:${thymeleafExtrasConditionalcommentsVersion}")
+		compile("org.thymeleaf.extras:thymeleaf-extras-springsecurity3:${thymeleafExtrasSpringsecurity3Version}")
+	}
+
+	task spiJar(type: Jar) {
+		baseName = 'api-spi'
+		dependsOn classes
+		from sourceSets.main.output
+		include('com/park/spring/skeleton/base/**')
+	}
+	
+	artifacts {
+		spi spiJar
+	}
+}
+
+project(':sgqs_batch') {
+	apply plugin: 'spring-boot'
+
+	configurations {
+		spi
+	}
+
+	dependencies {
+		compile project(':sgqs_base')
+	}
+
+	task spiJar(type: Jar) {
+		baseName = 'api-spi'
+		dependsOn classes
+		from sourceSets.main.output
+		include('com/park/spring/skeleton/base/**')
+	}
+	
+	artifacts {
+		spi spiJar
+	}
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '1.12'
+}
+

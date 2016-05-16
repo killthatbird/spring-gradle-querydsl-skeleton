@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="template/layout"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>404エラー</title>
+</head>
+
+<body>
+
+<div class="error" layout:fragment="content">
+    <div class="error-code m-b-10 m-t-20">404 <i class="fa fa-warning"></i></div>
+    <h3 class="font-bold">We couldn't find the page..</h3>
+
+    <div class="error-desc">
+        Sorry, but the page you are looking for was either not found or does not exist. <br/>
+        Try refreshing the page or click the button below to go back to the Homepage.
+        <div>
+            <a class=" login-detail-panel-button btn" href="../" th:href="@{/}">
+                    <i class="fa fa-arrow-left"></i>
+                    Go back to Homepage                        
+                </a>
+        </div>
+    </div>
+</div>
+
+<div layout:fragment="custom-script">
+
+</div>
+
+</body>
+</html>

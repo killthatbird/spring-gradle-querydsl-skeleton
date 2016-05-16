@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="template/layout"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>指定されたページは存在しません。</title>
+</head>
+
+<body>
+
+<div class="error" layout:fragment="content">
+	<ol class="topic-path">
+		<li><a href="/index.html" th:href="@{/}">トップページ</a></li>
+		<li>404 Not Found</li>
+	</ol>
+	<div class="gridContainer">
+		<h3>指定されたページは存在しません。</h3>
+		<br/>
+		申し訳ございません。指定されたページが見つかりませんでした。<br/><br/>
+		・直接URLを入力された場合は、誤ったURLを入力していないかご確認ください。<br/>
+		・リンクをクリックされた場合は、リンク先が変更もしくは削除されたことが考えられます。<br/>
+		<br/><br/>
+		<a href="../index.html" th:href="@{/}">TOP</a>へ
+		<br/><br/><br/>
+	</div>
+</div>
+	
+
+<div layout:fragment="custom-script">
+
+</div>
+
+</body>
+</html>

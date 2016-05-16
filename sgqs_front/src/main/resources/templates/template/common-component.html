@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<!-- Pagination ：　START  -->
+<div th:fragment="paginationbar">
+<ul class="pagination pagination-centered" th:if="${pagination != null}">
+	<li th:class="${pagination.firstPage}? 'disabled' : ''">
+		<span th:if="${pagination.firstPage}">«</span>
+		<a th:if="${not pagination.firstPage}" th:href="@{${pagination.url}(page.page=0,page.size=${pagination.size})}">«</a>
+	</li>
+	<li th:class="${pagination.hasPreviousPage}? '' : 'disabled'">
+		<span th:if="${not pagination.hasPreviousPage}">‹</span>
+		<a th:if="${pagination.hasPreviousPage}" th:href="@{${pagination.url}(page.page=${pagination.number-1},page.size=${pagination.size})}" title="Go to previous page">‹</a>
+	</li>
+	<li th:each="item : ${pagination.items}" th:class="${item.current}? 'active' : ''">
+		<span th:if="${item.current}" th:text="${item.number + 1}">1</span>
+		<a th:if="${not item.current}" th:href="@{${pagination.url}(page.page=${item.number},page.size=${pagination.size})}"><span th:text="${item.number + 1}">1</span></a>
+	</li>
+	<li th:class="${pagination.hasNextPage}? '' : 'disabled'">
+		<span th:if="${not pagination.hasNextPage}">›</span>
+		<a th:if="${pagination.hasNextPage}" th:href="@{${pagination.url}(page.page=${pagination.number+1},page.size=${pagination.size})}" title="Go to next page">›</a>
+	</li>
+	<li th:class="${pagination.lastPage}? 'disabled' : ''">
+		<span th:if="${pagination.lastPage}">»</span>
+		<a th:if="${not pagination.lastPage}" th:href="@{${pagination.url}(page.page=${pagination.totalPages-1},page.size=${pagination.size})}">»</a>
+	</li>
+</ul>
+</div>
+<!-- Pagination ：　END　 -->
+
+
+<!-- Common File Upload Start TODO:未使用 -->
+<div th:fragment="fileUpload">
+<!-- The fileinput-button span is used to style the file input field as button -->
+<div class="input-group file-upload-area">
+	<span class="input-group-btn"><span class="btn btn-default fileinput-button"><i class="glyphicon glyphicon-folder-open"></i>
+	<!-- The file input field used as target for the file upload widget -->
+	
+	<input class="hiddenFileInput" type="file" name="files[]" th:onchange="'$(\'#dummy_file_input' + ${targetId} + '\').val($(this).val());'"
+		th:attr="data-targetId=${targetId},data-url=@{/common/fileUploadAction.html}"/>
+	</span></span>
+	<input th:id="'dummy_file_input' + ${targetId}" type="text" class="form-control dummy_file_input" placeholder="Select file..." disabled="" />
+	<input type="button" th:id="'fileUploadBtn' + ${targetId}" class="btn btn-primary" value="Upload"/>
+</div>
+<!-- The global progress bar -->
+<div th:id="'fileUploadProgress' + ${targetId}" class="progress"><div class="progress-bar progress-bar-success"></div></div>
+<div th:id="'fileUploadInfo' + ${targetId}" th:text="${uploadFileName}"></div>
+</div>
+<!-- Common File Upload End -->
+
+</body>
+</html>

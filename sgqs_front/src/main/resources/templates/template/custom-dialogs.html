@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+
+<!-- 会員の詳細　：　START  -->
+<div data-th-fragment="member-detail">
+
+<div class="modal fade" id="memberDetailDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-big">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">
+					<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+				</button>
+				<h4 class="modal-title"><i class="fa fa-file-text-o text-info"></i> <sapn data-th-text="#{mypage.member.detail.title}">Modal title</sapn></h4>
+			</div>
+			
+			<div class="modal-body modal-body-scroll" id="confirmDialogBodyId">
+				<form class="form-horizontal" name="memberDetailDialogForm" id="memberDetailDialogForm" method="post">
+				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+				<input type="hidden" name="frontMemberKey" id="frontMemberKey" />
+				<div class="well bs-component">
+					<fieldset>
+						<legend data-th-text="#{mypage.member.detail.sub.title}">member detail sub title</legend>
+						<div class="form-group">
+							<label class="col col-xs-12 col-sm-3 col-md-3 control-label" data-th-text="#{entity.front-member.mem-id}">Member Id</label>
+							<div class="col col-xs-12 col-sm-7 col-md-7">
+								<input type="text" name="frontMemberLoginId" id="frontMemberLoginId" class="form-control text" minlength="6" maxlength="40" required="required"/>
+							</div>
+							<div class="col-xs-offset-0 col-sm-offset-2 col-md-offset-2"></div>
+						</div>
+						<div class="form-group">
+							<label class="col col-xs-12 col-sm-3 col-md-3 control-label" data-th-text="#{entity.front-member.password}">Password</label>
+							<div class="col col-xs-12 col-sm-7 col-md-7">
+								<p><input type="text" id="frontMemberLoginPassword" name="frontMemberLoginPassword" class="form-control text"
+									 minlength="6" maxlength="40" /></p>
+							</div>
+							<div class="col-xs-offset-0 col-sm-offset-2 col-md-offset-2"></div>
+						</div>
+						<div class="form-group">
+							<label class="col col-xs-12 col-sm-3 col-md-3 control-label" data-th-text="#{entity.front-member.name}">Name</label>
+							<div class="col col-xs-12 col-sm-7 col-md-7">
+								<p><input type="text" id="frontMemberName" name="frontMemberName" class="form-control text" required="required"
+									 maxlength="100" /></p>
+							</div>
+							<div class="col-xs-offset-0 col-sm-offset-2 col-md-offset-2"></div>
+						</div>
+						<div class="form-group">
+							<label class="col col-xs-12 col-sm-3 col-md-3 control-label" data-th-text="#{entity.front-member.login-dt}">Login Date</label>
+							<div class="col col-xs-12 col-sm-7 col-md-7">
+								<p id="frontMemberLoginDt"></p>
+							</div>
+							<div class="col-xs-offset-0 col-sm-offset-2 col-md-offset-2"></div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col col-xs-12 col-sm-3 col-md-3 control-label" data-th-text="#{entity.front-member.login-locked}">Login Locked</label>
+							<div class="col col-xs-12 col-sm-7 col-md-7">
+								<div class="btn-group" data-toggle="buttons">
+									<label class="btn btn-info"> 
+										<input type="radio" name="frontMemberIsLocked" id="frontMemberIsLocked1" autocomplete="off" value="1" th:text="#{common.enabled}"/> 
+									</label> 
+									<label class="btn btn-info"> 
+										<input type="radio" name="frontMemberIsLocked" id="frontMemberIsLocked0" autocomplete="off" value="0" th:text="#{common.disabled}"/>
+									</label>
+								</div>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col col-xs-12 col-sm-3 col-md-3 control-label" data-th-text="#{entity.front-member.division}">Type</label>
+							<div class="col col-xs-12 col-sm-7 col-md-7">
+								<select class="selectpicker" required="" name="frontMemberTp" id="frontMemberTp" th:title="#{common.select.title}" >
+									<option th:each="masterCodeBean : ${beans.mstMasterCode.getSubCodeList(beans.mstMasterCode.MEM_TYPE)}" 
+											th:value="${masterCodeBean.mstSubKey}" th:text="${masterCodeBean.mstNm}">
+										option
+									</option>
+								</select>
+							</div>
+							<div class="col-xs-offset-0 col-sm-offset-2 col-md-offset-2"></div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col col-xs-12 col-sm-3 col-md-3 control-label" data-th-text="#{entity.front-member.status}">Status</label>
+							<div class="col col-xs-12 col-sm-7 col-md-7">
+								<select class="selectpicker" required="" name="frontMemberStatusTp" id="frontMemberStatusTp" th:title="#{common.select.title}" >
+									<option th:each="masterCodeBean : ${beans.mstMasterCode.getSubCodeList(beans.mstMasterCode.MEM_STATUS)}" 
+											th:value="${masterCodeBean.mstSubKey}" th:text="${masterCodeBean.mstNm}">
+										option
+									</option>
+								</select>
+							</div>
+							<div class="col-xs-offset-0 col-sm-offset-2 col-md-offset-2"></div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col col-xs-12 col-sm-3 col-md-3 control-label" data-th-text="#{common.reg.dt}">Reg Date</label>
+							<div class="col col-xs-12 col-sm-7 col-md-7">
+								<p id="frontMemberRegDt"></p>
+							</div>
+							<div class="col-xs-offset-0 col-sm-offset-2 col-md-offset-2"></div>
+						</div>
+						
+					</fieldset>
+				</div>
+				
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" th:onclick="'gotoPostActionAjax(\'memberDetailDialogForm\', \'' + @{/mypage-normal/memberEditAction.html} + '\')'"><i class="fa fa-floppy-o"></i> <span data-th-text="#{common.save}">Save</span></button>
+				<button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+<!-- 会員の詳細 　：　END　 -->
+
+</body>
+</html>

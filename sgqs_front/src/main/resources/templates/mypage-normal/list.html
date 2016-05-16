@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="template/layout"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+
+<div class="container" layout:fragment="content">
+	
+	<div class="panel panel-default card">
+		<!-- Default panel contents -->
+		<div class="panel-heading"><h3><i class="glyphicon glyphicon-search"></i> Search</h3></div>
+		<div class="panel-body">
+			<form class="form-horizontal" role="search" name="searchForm" method="get">
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="form-group">
+							<label for="showDate" class="col-lg-2 control-label" data-th-text="#{common.member.division}">Mem Division</label>
+							<div class="col-lg-10">
+								
+								<label class="checkbox-inline" th:each="masterCodeBean : ${beans.mstMasterCode.getSubCodeList(beans.mstMasterCode.MEM_TYPE)}" >
+									<input type="checkbox" th:value="${masterCodeBean.mstSubKey}" name="searchMemberTp"
+										th:checked="${param.searchMemberTp == null || #lists.contains(param.searchMemberTp, masterCodeBean.mstSubKey+'')}"/> <span th:text="${masterCodeBean.mstNm}">name</span>
+								</label>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="form-group col-lg-10">
+				
+					<div class="input-group">
+						<select class="selectpicker" data-style="btn-success" name="searchKey" id="searchKey">
+							<option value="frontMemberLoginId" th:selected="${param.searchKey != null and param.searchKey[0] == 'frontMemberLoginId'}" th:text="#{entity.front-member.mem-id}">ID</option>
+							<option value="frontMemberNm" th:selected="${param.searchKey != null and param.searchKey[0] == 'frontMemberNm'}" th:text="#{entity.front-member.name}">name</option>
+						</select>
+						
+						<input type="text" class="form-control" placeholder="Search" name="searchValue" id="searchValue" th:value="${param.searchValue != null ? param.searchValue[0] : ''}" />
+					</div>
+				</div>
+				
+				<div class="form-group col-lg-10">
+					<span class="input-group-btn">
+						<button type="submit" class="btn btn-default"><i class="fa fa-search"></i> <span data-th-text="#{common.search}">Search</span></button>
+					</span>
+				</div>
+				
+			</form>
+		</div>
+	</div>
+	
+	<div class="panel panel-default">
+		
+		<!-- Default panel contents -->
+		<div class="table-header-right">
+			<button type="button" class="btn btn-s btn-primary" onclick="showMemberEditDialog()"><i class="fa fa-file-o"></i> <span data-th-text="#{common.insert}" >New insert</span></button>
+		</div>
+		<div class="panel-heading" data-th-text="#{mypage.form.title}">Panel heading</div>
+		<form role="form" name="mainForm" method="post">
+			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+			<input type="hidden" name="frontMemberKey" id="frontMemberKey" />
+			<input type="hidden" name="pageName" value="auth" />
+			<div class="table-responsive">
+				
+				<table class="table table-striped table-hover table-text-center">
+					<thead>
+						<tr>
+							<th data-th-text="#{entity.front-member.mem-id}">ID</th>
+							<th data-th-text="#{entity.front-member.division}">Divison</th>
+							<th data-th-text="#{entity.front-member.name}">Person</th>
+							<th data-th-text="#{common.reg.dt}">Reg Dt</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="frontMember : ${frontMembers}">
+							<td th:text="${frontMember.frontMemberLoginId}">Id</td>
+							<td th:text="${beans.mstMasterCode.getCodeName(frontMember.frontMemberTp)}">Member Tp</td>
+							<td th:text="${frontMember.frontMemberName}">Member Name</td>
+							<td th:text="${frontMember.frontMemberRegDt != null ? #dates.format(frontMember.frontMemberRegDt, 'yyyy-MM-dd') : ''}">Posted Date</td>
+							<td>
+								<button type="button" class="btn btn-s btn-warning" th:onclick="'gotoGetAjaxDialog(\'' + @{${'/mypage-normal/detail-' + frontMember.frontMemberKey + '.html'}} + '\', memberDetailResult)'"><i class="fa fa-file-text-o"></i> <span data-th-text="#{common.detail}">Detail</span></button>
+							</td>
+							
+						</tr>
+						
+						<tr th:if="${#lists.isEmpty(frontMembers)}" >
+							<td colspan="6" th:text="#{common.info.message.data.not.found}" class="data-not-found">
+								data not found
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</form>
+	</div>
+	<div class="text-center">
+		<div th:replace="template/common-component :: paginationbar">paginationbar</div>
+	</div> 
+	
+	<div th:replace="template/custom-dialogs :: member-detail">Dialog</div>
+	
+</div>
+<!-- /container -->
+
+<div layout:fragment="custom-script">
+
+</div>
+</body>
+</html>
