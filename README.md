@@ -21,7 +21,7 @@
  spring-*-4.2.6<br/>
  spring-security-*-4.0.4<br/>
  queryDSL-*-3.7.2<br/>
- 　      <br/><br/
+ <br/><br/>
 
 ・プロジェクト構成<br/>
  sgqs_base			共通モジュール格納「util, dao, dto」<br/>
